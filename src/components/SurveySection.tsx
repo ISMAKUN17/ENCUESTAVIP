@@ -2,6 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import RatingOption from './RatingOption';
+import { useLanguage } from '@/context/LanguageContext';
 
 type Question = {
   id: string;
@@ -27,6 +28,8 @@ const SurveySection = ({
   isActive,
   animationDelay = 0,
 }: SurveySectionProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div
       className={cn(
@@ -40,7 +43,7 @@ const SurveySection = ({
       <div className="p-6 md:p-8 glass-card rounded-xl mb-10 animate-fade-in">
         <div className="mb-6">
           <div className="inline-block px-3 py-1 bg-primary/10 rounded-full text-primary text-xs font-semibold mb-2">
-            Section
+            {t('section')}
           </div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">{title}</h2>
           <div className="h-1 w-20 bg-primary/30 rounded-full"></div>
@@ -74,7 +77,7 @@ const SurveySection = ({
                   name={question.id}
                   rows={4}
                   className="w-full p-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none resize-none transition-all"
-                  placeholder="Share your thoughts with us..."
+                  placeholder={t('comment_placeholder')}
                   value={responses[question.id] || ''}
                   onChange={(e) => onResponseChange(question.id, e.target.value)}
                 ></textarea>
