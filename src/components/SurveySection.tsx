@@ -3,6 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import RatingOption from './RatingOption';
 import { useLanguage } from '@/context/LanguageContext';
+import { Textarea } from '@/components/ui/textarea';
 
 type Question = {
   id: string;
@@ -72,7 +73,7 @@ const SurveySection = ({
                   ))}
                 </div>
               ) : (
-                <textarea
+                <Textarea
                   id={question.id}
                   name={question.id}
                   rows={4}
@@ -80,7 +81,7 @@ const SurveySection = ({
                   placeholder={t('comment_placeholder')}
                   value={responses[question.id] || ''}
                   onChange={(e) => onResponseChange(question.id, e.target.value)}
-                ></textarea>
+                />
               )}
             </div>
           ))}

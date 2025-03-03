@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +32,7 @@ const Index = () => {
       id: 'facilities',
       title: sectionTitles[language].facilities,
       questions: questions[language].facilities.map(q => {
+        // Use yes/no options only for night_coverage question
         const options = q.id === 'night_coverage' 
           ? [t('yes'), t('no')] 
           : [t('very_good'), t('good'), t('poor'), t('very_poor')];
@@ -58,22 +58,12 @@ const Index = () => {
     {
       id: 'butler',
       title: sectionTitles[language].butler,
-      questions: questions[language].butler.map(q => {
-        if (q.id === 'comments') {
-          return {
-            id: q.id,
-            text: q.text,
-            options: [],
-            type: 'textarea' as const,
-          };
-        }
-        return {
-          id: q.id,
-          text: q.text,
-          options: [t('very_good'), t('good'), t('poor'), t('very_poor')],
-          type: 'radio' as const,
-        };
-      }),
+      questions: questions[language].butler.map(q => ({
+        id: q.id,
+        text: q.text,
+        options: [t('very_good'), t('good'), t('poor'), t('very_poor')],
+        type: q.id === 'comments' ? 'textarea' as const : 'radio' as const,
+      })),
     },
   ];
 
@@ -236,7 +226,7 @@ const Index = () => {
       <UserInfoForm 
         open={showUserInfoForm} 
         onClose={handleCloseUserInfoForm} 
-        onSubmit={handleUserInfoSubmit} 
+        onSubmit={handleUserInfoSubmit}
       />
     </div>
   );
