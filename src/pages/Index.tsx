@@ -7,6 +7,7 @@ import SurveySection from '@/components/SurveySection';
 import ProgressIndicator from '@/components/ProgressIndicator';
 import ThankYouScreen from '@/components/ThankYouScreen';
 import LanguageSelector from '@/components/LanguageSelector';
+import UserInfoForm, { UserInfo } from '@/components/UserInfoForm';
 import { useLanguage } from '@/context/LanguageContext';
 import { sectionTitles, questions } from '@/lib/translations';
 
@@ -15,6 +16,8 @@ const Index = () => {
   const { language, t } = useLanguage();
   const [currentSection, setCurrentSection] = useState(0);
   const [responses, setResponses] = useState<Record<string, string>>({});
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [showUserInfoForm, setShowUserInfoForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -102,13 +105,34 @@ const Index = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleOpenUserInfoForm = () => {
+    setShowUserInfoForm(true);
+  };
+
+  const handleCloseUserInfoForm = () => {
+    setShowUserInfoForm(false);
+  };
+
+  const handleUserInfoSubmit = (info: UserInfo) => {
+    setUserInfo(info);
+    setShowUserInfoForm(false);
+    submitSurvey(info);
+  };
+
+  const submitSurvey = (info: UserInfo) => {
     setIsLoading(true);
     // Simulating submission to a server
     setTimeout(() => {
       setIsLoading(false);
       setSubmitted(true);
-      console.log('Survey submitted:', responses);
+      
+      // Combine survey responses with user information
+      const completeData = {
+        userInfo: info,
+        responses
+      };
+      
+      console.log('Survey submitted:', completeData);
       
       // In a real app, you would send the data to your server here
       // fetch('/api/submit-survey', {
@@ -116,8 +140,13 @@ const Index = () => {
       //   headers: {
       //     'Content-Type': 'application/json',
       //   },
-      //   body: JSON.stringify(responses),
+      //   body: JSON.stringify(completeData),
       // })
+      
+      toast({
+        title: t('submit_success'),
+        variant: "default",
+      });
       
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 1500);
@@ -193,25 +222,22 @@ const Index = () => {
             </Button>
           ) : (
             <Button
-              onClick={handleSubmit}
-              disabled={!canProceed() || isLoading}
+              onClick={handleOpenUserInfoForm}
+              disabled={!canProceed()}
               className="flex items-center"
             >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  {t('submitting')}
-                </div>
-              ) : (
-                <>
-                  {t('submit')}
-                  <Send className="w-4 h-4 ml-1" />
-                </>
-              )}
+              {t('submit')}
+              <Send className="w-4 h-4 ml-1" />
             </Button>
           )}
         </div>
       </div>
+
+      <UserInfoForm 
+        open={showUserInfoForm} 
+        onClose={handleCloseUserInfoForm} 
+        onSubmit={handleUserInfoSubmit} 
+      />
     </div>
   );
 };
